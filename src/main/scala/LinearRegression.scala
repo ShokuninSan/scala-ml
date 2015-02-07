@@ -3,6 +3,12 @@ import breeze.plot._
 
 object LinearRegression {
 
+  type Theta = DenseVector[Double]
+  type J = Array[Double]
+  type Features = DenseMatrix[Double]
+  type Labels = DenseVector[Double]
+  type Prediction = DenseVector[Double]
+
   def plotData(X: DenseVector[Double], y: DenseVector[Double]): Figure = {
     val f = Figure()
     f.subplot(0) +=  scatter(X, y, {(_:Int) => 0.1})
@@ -13,34 +19,24 @@ object LinearRegression {
     f
   }
 
-  /**
-   * Hypothesis of all samples of X in one shot.
-   *
-   * @param X The feature matrix
-   * @param theta The parameters
-   * @return A vector with prediction results
-   */
-  def hypothesis(theta: DenseVector[Double]): DenseMatrix[Double] => DenseVector[Double] =
-    (X: DenseMatrix[Double]) => X * theta
+  def h(theta: Theta): Features => Prediction = (X: Features) => X * theta
 
-  def computeCost(X: DenseMatrix[Double], y: DenseVector[Double], theta: DenseVector[Double]): Double = {
+  def computeCost(X: Features, y: Labels, theta: Theta): Double = {
     val m = y.length  // # of samples
-    val h = hypothesis(theta)
-    val mse = sum((h(X) - y) :^ 2.0)
+    val mse = sum((h(theta)(X) - y) :^ 2.0)
     (1.0/(2.0*m)) * mse
   }
 
-  def gradientDescent(X: DenseMatrix[Double], y: DenseVector[Double], theta: DenseVector[Double], alpha: Double, iterations: Int): (DenseVector[Double], Seq[Double]) = {
+  private def updateTheta(theta: Theta, f: ((Double, Int)) => Double): Theta = DenseVector(theta.toArray.zipWithIndex.map(f))
+
+  def gradientDescent(X: Features, y: Labels, theta: Theta, alpha: Double, iterations: Int): (Theta, J) = {
+    def derivative(theta: Theta, featureIndex: Int) = (1.0/y.length) * sum((h(theta)(X) - y) :* X(::, featureIndex))
     val J_history = DenseVector.zeros[Double](iterations).toArray
-    var _theta = theta
-    val m = y.length
-    (0 to iterations - 1) foreach { it =>
-      val delta = hypothesis(_theta)(X) - y
-      def derivative(featureIndex: Int): Double = (1.0/m) * sum(X(::, featureIndex) :* delta)
-      _theta = DenseVector(_theta.toArray.zipWithIndex.map(e => e._1 - alpha * derivative(e._2)))
-      J_history(it) = computeCost(X, y, _theta)
+    (0 to iterations - 1).foldLeft ((theta, J_history)) { (g, i) =>
+      val _theta = updateTheta(g._1, e => e._1 - alpha * derivative(g._1, e._2))
+      g._2(i) = computeCost(X, y, _theta)
+      (_theta, g._2)
     }
-    (_theta, J_history)
   }
 
   def main(args: Array[String]): Unit = {
