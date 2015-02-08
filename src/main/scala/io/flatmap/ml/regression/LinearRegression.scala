@@ -1,7 +1,6 @@
 package io.flatmap.ml.regression
 
 import breeze.linalg._
-import breeze.plot._
 
 object LinearRegression extends RegressionModel with Optimization {
 
@@ -21,11 +20,14 @@ object LinearRegression extends RegressionModel with Optimization {
     val m = y.length
     val X = DenseMatrix(DenseVector.ones[Double](m).toArray, data(::,0).toArray).t
     val theta = DenseVector.zeros[Double](2)
-    Plot.data(x, y) // scatter plot training data
+    Plot.data("Profit/Population", x, y) // scatter plot training data
     gradientDescent(X, y, theta, 0.01, 1500) match {
       case (theta: Theta, history: J) =>
-        Plot.hypothesis(X, theta)
+        Plot.hypothesis("Gradient Descent", X, theta)
         Plot.error(history)
+    }
+    normalEquation(X, y) match {
+      case theta => Plot.hypothesis("Normal Equation", X, theta)
     }
   }
 

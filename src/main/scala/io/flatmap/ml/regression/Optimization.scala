@@ -6,6 +6,8 @@ trait Optimization {
 
   self: RegressionModel =>
 
+  def normalEquation(X: Features, y: Labels): Theta = pinv(X.t * X) * X.t * y
+
   def gradientDescent(X: Features, y: Labels, theta: Theta, alpha: Double, iterations: Int): (Theta, J) = {
     def derivative(theta: Theta, featureIndex: Int) = (1.0/y.length) * sum((h(theta)(X) - y) :* X(::, featureIndex))
     val J_history = DenseVector.zeros[Double](iterations).toArray
