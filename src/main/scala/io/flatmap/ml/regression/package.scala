@@ -9,5 +9,7 @@ package object regression {
   type Features = DenseMatrix[Double]
   type Labels = DenseVector[Double]
   type Prediction = DenseVector[Double]
+  type Mu = DenseVector[Double]
+  type Sigma = DenseVector[Double]
 
 }
