@@ -2,13 +2,10 @@ package io.flatmap.ml.regression
 
 import breeze.linalg._
 import breeze.plot.Figure
+import scalaz._
+import Scalaz._
 
 object LinearRegression extends RegressionModel with Optimization {
-
-  implicit val modelPlotConfig = PlotConfig(name = "Profit/Population", title = "Linear Regression Model", xlabel = "Population of City in 10,000s", ylabel = "Profit in $10,000s")
-  implicit val gdPlotConfig = PlotConfig(name = "Gradient descent", title = "Gradient descent", xlabel = "Iterations", ylabel = "J(θ)")
-  implicit val model = Figure(modelPlotConfig.name)
-  implicit val gd = Figure(gdPlotConfig.name)
 
   override def h(theta: Theta): Features => Prediction = (X: Features) => X * theta
 
@@ -19,6 +16,10 @@ object LinearRegression extends RegressionModel with Optimization {
 
   def univariateLinearRegressionEval: Unit = {
     val data = csvread(new java.io.File("resources/ex1data1.txt"))
+    val modelPlotConfig = PlotConfig(name = "Profit/Population", title = "Linear Regression Model".some, xlabel = "Population of City in 10,000s".some, ylabel = "Profit in $10,000s".some)
+    val gdPlotConfig = PlotConfig(name = "Cost", title = "Gradient descent".some, xlabel = "Iterations".some, ylabel = "J(θ)".some)
+    val model = Figure(modelPlotConfig.name)
+    val gd = Figure(gdPlotConfig.name)
     val x = data(::,0)
     val y = data(::,1)
     val m = y.length
