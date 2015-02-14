@@ -41,6 +41,8 @@ object LogisticRegression extends RegressionModel with Optimization {
     val newTheta = fminunc(costFn, theta)
     println(s"New theta found by fminunc (LBFGS): $newTheta")
     Plot.decisionBoundary(X, y, newTheta)
+    val probability = h(newTheta)(DenseVector[Double](1.0, 45.0, 85.0).toDenseMatrix)
+    println(s"A student with an Exam 1 score of 45 and an Exam 2 score of 85 has admission probability: $probability")
   }
 
   private def coordinates(X: Features, y: Labels, f: Double => Boolean): (DenseVector[Double], DenseVector[Double]) = {
