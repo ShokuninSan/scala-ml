@@ -1,6 +1,6 @@
 package io.flatmap.ml.regression
 
-import breeze.linalg.DenseVector
+import breeze.linalg.{min, max, DenseVector}
 import breeze.plot._
 import java.awt.Color
 
@@ -24,6 +24,12 @@ object Plot {
 
   def hypothesis(X: Features, theta: Theta)(implicit figure: Figure, cfg: PlotConfig): Unit =
     draw(plot(X(::,1), X * theta, name = cfg.name))
+
+  def decisionBoundary(X: Features, y: Labels, theta: Theta)(implicit figure: Figure, cfg: PlotConfig): Unit = {
+    val x = DenseVector[Double](min(X(::,2))-2.0, max(X(::,2))+2.0)
+    val y = (-1.0 / theta(2)) * (theta(1) * x + theta(0))
+    draw(plot(x,y, name = "Decision boundary", colorcode = "b"))
+  }
 
   def draw(series: Series)(implicit figure: Figure, cfg: PlotConfig): Unit = {
     figure.subplot(0) += series

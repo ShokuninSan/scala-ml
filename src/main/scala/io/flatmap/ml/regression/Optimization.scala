@@ -1,11 +1,20 @@
 package io.flatmap.ml.regression
 
 import breeze.linalg._
+import breeze.optimize.{DiffFunction, LBFGS}
 import breeze.stats._
 
 trait Optimization {
 
   self: RegressionModel =>
+
+  def fminunc(costFn: (Theta) => (Cost, Gradients), initialTheta: Theta, maxIterations: Int = 400): Theta = {
+    val f = new DiffFunction[DenseVector[Double]] {
+      def calculate(theta: DenseVector[Double]): (Double, DenseVector[Double]) = costFn(theta)
+    }
+    val lbfgs = new LBFGS[DenseVector[Double]](maxIter = maxIterations, m = 3)
+    lbfgs.minimize(f, initialTheta)
+  }
 
   def normalEquation(X: Features, y: Labels): Theta = pinv(X.t * X) * X.t * y
 

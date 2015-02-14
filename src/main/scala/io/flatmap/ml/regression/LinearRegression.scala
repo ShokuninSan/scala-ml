@@ -7,7 +7,8 @@ import Scalaz._
 
 object LinearRegression extends RegressionModel with Optimization {
 
-  override def h(theta: Theta): Features => Prediction = (X: Features) => X * theta
+  override def h(theta: Theta): Features => Prediction =
+    (X: Features) => X * theta
 
   override def computeCost(X: Features, y: Labels, theta: Theta): Double = {
     val mse = sum((h(theta)(X) - y) :^ 2.0)
