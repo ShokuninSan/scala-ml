@@ -19,8 +19,7 @@ object LogisticRegression extends RegressionModel with Optimization with Logisti
   }
 
   def linearDecisionBoundaryEval: Unit = {
-    val (x, y, theta, m, figure, plotConfig) =
-      initializeModel("Logistic Regression with linear decision boundary", new java.io.File("resources/ex2data1.txt"))
+    val (x, y, theta, m, figure, plotConfig) = initializeLinearModel
     println("Cost at initial theta (zeros): " + computeCost(x, y, theta))
     val newTheta = fminunc((theta: Theta) => costFunction(x, y, theta), theta)
     println(s"New theta found by fminunc (LBFGS): $newTheta")
@@ -30,13 +29,7 @@ object LogisticRegression extends RegressionModel with Optimization with Logisti
   }
 
   def polynomialDecisionBoudaryEval: Unit = {
-    val (x, y, theta, m, figure, plotConfig) =
-      initializeModel(
-        "Logistic Regression with polynomial decision boundary",
-        new java.io.File("resources/ex2data2.txt"),
-        bubbleSize = 2.0,
-        normalizeFn = d => d*100
-      )
+    val (x, y, theta, m, figure, plotConfig) = initializePolynomialModel
     println("Cost at initial theta (zeros): " + computeCost(x, y, theta))
   }
 
