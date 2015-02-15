@@ -31,6 +31,7 @@ object LogisticRegression extends RegressionModel with Optimization with Logisti
   def polynomialDecisionBoudaryEval: Unit = {
     val (x, y, theta, m, figure, plotConfig) = initializePolynomialModel
     println("Cost at initial theta (zeros): " + computeCost(x, y, theta))
+    val mappedX = mapFeatures(x(::, 1), x(::, 2))
   }
 
   def main(args: Array[String]): Unit = {

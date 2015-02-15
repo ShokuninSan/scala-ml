@@ -70,4 +70,27 @@ trait LogisticRegressionSupport {
     (xs, ys)
   }
 
+  /**
+   *  Feature mapping function to polynomial features
+   *
+   *  mapFeatures(X1, X2) maps the two input features to quadratic features used in the regularization exercise.
+   *  Inputs X1, X2 must be the same size.
+   *
+   * @param x1
+   * @param x2
+   * @param degree
+   * @return A new feature matrix with more features, comprising of X1, X2, X1.^2, X2.^2, X1*X2, X1*X2.^2, etc..
+   */
+  def mapFeatures(x1: DenseVector[Double], x2: DenseVector[Double], degree: Int = 6): Features = {
+    assert(x1.length == x2.length)
+    val xs: Seq[DenseVector[Double]] = for {
+      i <- 1 to degree
+      j <- 0 to i
+    } yield (x1 :^ (i-j).toDouble) :* (x2 :^ (j.toDouble))
+    val m1 = DenseMatrix.ones[Double](x1.length,1)
+    val m2 = DenseMatrix(xs map { _.toArray }: _*).t
+    DenseMatrix.horzcat(m1, m2)
+  }
+
+
 }
